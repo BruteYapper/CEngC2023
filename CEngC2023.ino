@@ -1,39 +1,42 @@
-#define SERVO1PWM   9
-#define SERVO2PWM   6
 #include <Servo.h>
 #include <AFMotor.h>
 
+const int serPin1 = 9;
+const int serPin2 = 10;
+
+
 int liftAngle;
-Servo servo1;
-Servo servo2;
+unsigned int currentTime;
+unsigned int time;
+
+Servo serv1;
+Servo serv2;
+
+AF_DCMotor motor(1, MOTOR12_8KHZ);
 
 void setup() {
-  // put your setup code here, to run once:
-  liftAngle = 0;
-  servo1.attach(10);
-  // servo2.attach(SERVO2PWM);
-  
+  serv1.attach(serPin1);
+  serv2.attach(serPin2);
+  motor.setSpeed(255);
+  liftAngle = 85;
+  time = millis() + 2700;
+  Serial.begin(9600);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  // servo1.write(-liftAngle);
-  // servo2.write(liftAngle);
-  delay(7000);
-  liftAngle = 0;
-
-  servo1.write(liftAngle);
-  // servo2.write(liftAngle);
-
-  delay(2000);
-  for(int i = 0; i < 20; i++){  
-    liftAngle += 5;
-
-    servo1.write(liftAngle);
-    // servo2.write(liftAngle);
-
-    delay(500);
+  // Serial.print(currentTime);
+  // Serial.print("\n");
+  // Serial.print(time);
+  // Serial.print("\n");
+  currentTime = millis();
+  if (currentTime >= time){
+    motor.run(RELEASE);
+    serv1.write(0);
+    serv2.write(0);  
+  } else{
+    motor.run(FORWARD);
+    serv1.write(liftAngle);
+    serv2.write(liftAngle);
+    
   }
-
-
 }
